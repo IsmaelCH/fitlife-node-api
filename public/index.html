@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="color-scheme" content="light" />
+  <title>FitLife API – Endpoints</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/styles.css" />
+  <meta name="theme-color" content="#ffffff" />
+</head>
+<body>
+  <div class="shell">
+    <header class="page-header">
+      <h1 class="title">FitLife API</h1>
+      <p class="subtitle">Node.js · Express · Prisma · SQLite</p>
+    </header>
+
+    <main class="stack">
+      <section class="card">
+        <h2 class="section-title">Base URL</h2>
+        <p><code>http://localhost:3000</code></p>
+      </section>
+
+      <section class="card">
+        <h2 class="section-title">Users</h2>
+        <ul class="list">
+          <li><code>GET /users?limit=20&amp;offset=0&amp;search=alex</code> – List users (pagination + search)</li>
+          <li><code>GET /users/:id</code> – Get user details (includes workouts)</li>
+          <li><code>POST /users</code> – Create user</li>
+          <li><code>PUT /users/:id</code> – Update user</li>
+          <li><code>DELETE /users/:id</code> – Delete user</li>
+        </ul>
+
+        <h3 class="block-title">POST /users body</h3>
+        <pre>{
+  "firstName": "Alex",
+  "lastName": "Lopez",
+  "email": "alex@mail.com",
+  "age": 22
+}</pre>
+      </section>
+
+      <section class="card">
+        <h2 class="section-title">Workouts</h2>
+        <ul class="list">
+          <li><code>GET /workouts?limit=20&amp;offset=0&amp;search=cardio</code> – List workouts (pagination + search)</li>
+          <li><code>GET /workouts/:id</code> – Get workout details</li>
+          <li><code>POST /workouts</code> – Create workout</li>
+          <li><code>PUT /workouts/:id</code> – Update workout</li>
+          <li><code>DELETE /workouts/:id</code> – Delete workout</li>
+        </ul>
+
+        <h3 class="block-title">POST /workouts body</h3>
+        <pre>{
+  "title": "Cardio session",
+  "description": "Treadmill and bike",
+  "durationMinutes": 45,
+  "userId": 1
+}</pre>
+      </section>
+
+      <section class="card">
+        <h2 class="section-title">Notes</h2>
+        <ul class="list">
+          <li>Validation: required fields, numeric checks, firstName cannot contain digits.</li>
+          <li>Max limit is 100.</li>
+        </ul>
+      </section>
+    </main>
+
+    <footer class="page-footer">
+      <p>© FitLife API</p>
+    </footer>
+  </div>
+</body>
+</html>
