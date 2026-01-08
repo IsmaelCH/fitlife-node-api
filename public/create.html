@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Create Data - FitLife</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    .content-wrapper {
+      max-width: 700px;
+      margin: 0 auto;
+      padding: 40px 20px;
+    }
+
+    .form-section {
+      background: white;
+      border: 1px solid #e0e0e0;
+      border-radius: 8px;
+      padding: 32px;
+      margin-bottom: 24px;
+      transition: box-shadow 0.2s;
+    }
+
+    .form-section:hover {
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+
+    .form-section h2 {
+      margin-top: 0;
+      margin-bottom: 24px;
+      font-size: 20px;
+      font-weight: 600;
+      color: #333;
+      padding-bottom: 12px;
+      border-bottom: 1px solid #e0e0e0;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: 500;
+      color: #333;
+      font-size: 14px;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 10px 14px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      font-size: 14px;
+      font-family: inherit;
+      transition: border-color 0.2s;
+      box-sizing: border-box;
+    }
+
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: #333;
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+
+    button[type="submit"] {
+      width: 100%;
+      padding: 12px;
+      background: #333;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    button[type="submit"]:hover {
+      background: #555;
+    }
+
+    .result {
+      padding: 16px;
+      border-radius: 6px;
+      margin-top: 16px;
+      font-size: 14px;
+      display: none;
+    }
+
+    .result.success {
+      background: #e8f5e9;
+      border: 1px solid #c8e6c9;
+      color: #388e3c;
+    }
+
+    .result.error {
+      background: #ffebee;
+      border: 1px solid #ffcdd2;
+      color: #d32f2f;
+    }
+
+    .result pre {
+      margin-top: 12px;
+      background: white;
+      padding: 12px;
+      border-radius: 4px;
+      overflow-x: auto;
+      font-size: 12px;
+    }
+
+    .list-section {
+      background: white;
+      border: 1px solid #e0e0e0;
+      border-radius: 8px;
+      padding: 32px;
+      margin-bottom: 24px;
+    }
+
+    .list-section h2 {
+      margin-top: 0;
+      margin-bottom: 16px;
+      font-size: 18px;
+      font-weight: 600;
+      color: #333;
+      padding-bottom: 12px;
+      border-bottom: 1px solid #e0e0e0;
+    }
+
+    .data-grid {
+      display: grid;
+      gap: 12px;
+    }
+
+    .data-item {
+      padding: 12px 16px;
+      background: #fafafa;
+      border: 1px solid #e0e0e0;
+      border-radius: 6px;
+      font-size: 14px;
+    }
+
+    .data-item strong {
+      color: #333;
+      margin-right: 8px;
+    }
+
+    .data-item span {
+      color: #666;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 32px;
+      color: #999;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+  <div class="page-header">
+    <h1>🏃 FitLife API</h1>
+    <p>Create new data</p>
+    <div class="nav-links">
+      <a href="index.html">📖 Documentation</a>
+      <a href="demo.html">🧪 Demo</a>
+      <a href="create.html" class="active">➕ Create</a>
+    </div>
+  </div>
+
+  <div class="content-wrapper">
+    <!-- Combined Create Form -->
+    <div class="form-section">
+      <h2>Create New Data</h2>
+      <form id="createForm" onsubmit="createData(event)">
+        <!-- Select Type -->
+        <div class="form-group">
+          <label for="dataType">Type*</label>
+          <select id="dataType" required onchange="updateFormFields()">
+            <option value="">Select type...</option>
+            <option value="user">User</option>
+            <option value="category">Category</option>
+            <option value="workout">Workout</option>
+          </select>
+        </div>
+
+        <!-- User Fields -->
+        <div id="userFields" style="display:none;">
+          <div class="form-group">
+            <label for="userFirstName">First Name*</label>
+            <input type="text" id="userFirstName" placeholder="John">
+          </div>
+          <div class="form-group">
+            <label for="userLastName">Last Name*</label>
+            <input type="text" id="userLastName" placeholder="Doe">
+          </div>
+          <div class="form-group">
+            <label for="userEmail">Email*</label>
+            <input type="email" id="userEmail" placeholder="john@example.com">
+          </div>
+          <div class="form-group">
+            <label for="userAge">Age*</label>
+            <input type="number" id="userAge" placeholder="25">
+          </div>
+        </div>
+
+        <!-- Category Fields -->
+        <div id="categoryFields" style="display:none;">
+          <div class="form-group">
+            <label for="categoryName">Name*</label>
+            <select id="categoryName">
+              <option value="">Select or type custom...</option>
+              <option value="Cardio">Cardio</option>
+              <option value="Strength">Strength</option>
+              <option value="Flexibility">Flexibility</option>
+              <option value="HIIT">HIIT</option>
+              <option value="Yoga">Yoga</option>
+              <option value="custom">Custom (type below)</option>
+            </select>
+          </div>
+          <div class="form-group" id="customCategoryGroup" style="display:none;">
+            <label for="customCategoryName">Custom Name*</label>
+            <input type="text" id="customCategoryName" placeholder="Enter custom category name">
+          </div>
+          <div class="form-group">
+            <label for="categoryDesc">Description</label>
+            <textarea id="categoryDesc" placeholder="Description of the category"></textarea>
+          </div>
+        </div>
+
+        <!-- Workout Fields -->
+        <div id="workoutFields" style="display:none;">
+          <div class="form-group">
+            <label for="workoutUserId">User*</label>
+            <select id="workoutUserId">
+              <option value="">Loading users...</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="workoutTitle">Title*</label>
+            <select id="workoutTitle">
+              <option value="">Select or type custom...</option>
+              <option value="Morning Run">Morning Run</option>
+              <option value="Evening Walk">Evening Walk</option>
+              <option value="Gym Session">Gym Session</option>
+              <option value="Yoga Practice">Yoga Practice</option>
+              <option value="Swimming">Swimming</option>
+              <option value="Cycling">Cycling</option>
+              <option value="Weight Training">Weight Training</option>
+              <option value="HIIT Workout">HIIT Workout</option>
+              <option value="custom">Custom (type below)</option>
+            </select>
+          </div>
+          <div class="form-group" id="customTitleGroup" style="display:none;">
+            <label for="customWorkoutTitle">Custom Title*</label>
+            <input type="text" id="customWorkoutTitle" placeholder="Enter custom workout title">
+          </div>
+          <div class="form-group">
+            <label for="workoutDesc">Description</label>
+            <textarea id="workoutDesc" placeholder="Describe the workout"></textarea>
+          </div>
+          <div class="form-group">
+            <label for="workoutDuration">Duration (minutes)*</label>
+            <select id="workoutDuration">
+              <option value="">Select duration...</option>
+              <option value="15">15 min</option>
+              <option value="20">20 min</option>
+              <option value="30">30 min</option>
+              <option value="45">45 min</option>
+              <option value="60">60 min</option>
+              <option value="90">90 min</option>
+              <option value="custom">Custom</option>
+            </select>
+          </div>
+          <div class="form-group" id="customDurationGroup" style="display:none;">
+            <label for="customDuration">Custom Duration (minutes)*</label>
+            <input type="number" id="customDuration" placeholder="Enter minutes">
+          </div>
+          <div class="form-group">
+            <label for="workoutCategory">Category (optional)</label>
+            <select id="workoutCategory">
+              <option value="">None</option>
+            </select>
+          </div>
+        </div>
+
+        <button type="submit">Create</button>
+        <div id="result" class="result"></div>
+      </form>
+    </div>
+
+    <!-- Lists Section -->
+    <div class="list-section">
+      <h2>📋 Existing Users</h2>
+      <div id="usersList" class="data-grid">
+        <div class="empty-state">Loading...</div>
+      </div>
+    </div>
+
+    <div class="list-section">
+      <h2>🏷️ Existing Categories</h2>
+      <div id="categoriesList" class="data-grid">
+        <div class="empty-state">Loading...</div>
+      </div>
+    </div>
+
+    <div class="list-section">
+      <h2>💪 Existing Workouts</h2>
+      <div id="workoutsList" class="data-grid">
+        <div class="empty-state">Loading...</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const API_BASE = 'http://localhost:3000';
+
+    // Load users and categories on page load
+    window.addEventListener('DOMContentLoaded', async () => {
+      await loadUsers();
+      await loadCategories();
+      await displayAllData();
+    });
+
+    async function loadUsers() {
+      try {
+        const response = await fetch(`${API_BASE}/users`);
+        const data = await response.json();
+        const select = document.getElementById('workoutUserId');
+        select.innerHTML = '<option value="">Select user...</option>';
+        if (data.items && data.items.length > 0) {
+          data.items.forEach(user => {
+            select.innerHTML += `<option value="${user.id}">${user.firstName} ${user.lastName}</option>`;
+          });
+        }
+      } catch (error) {
+        console.error('Error loading users:', error);
+      }
+    }
+
+    async function loadCategories() {
+      try {
+        const response = await fetch(`${API_BASE}/categories`);
+        const data = await response.json();
+        const select = document.getElementById('workoutCategory');
+        select.innerHTML = '<option value="">None</option>';
+        if (data.items && data.items.length > 0) {
+          data.items.forEach(cat => {
+            select.innerHTML += `<option value="${cat.id}">${cat.name}</option>`;
+          });
+        }
+      } catch (error) {
+        console.error('Error loading categories:', error);
+      }
+    }
+
+    async function displayAllData() {
+      await displayUsers();
+      await displayCategories();
+      await displayWorkouts();
+    }
+
+    async function displayUsers() {
+      const container = document.getElementById('usersList');
+      try {
+        const response = await fetch(`${API_BASE}/users`);
+        const data = await response.json();
+        
+        if (data.items && data.items.length > 0) {
+          container.innerHTML = data.items.map(user => `
+            <div class="data-item">
+              <strong>${user.firstName} ${user.lastName}</strong>
+              <span>${user.email} • ${user.age} years</span>
+            </div>
+          `).join('');
+        } else {
+          container.innerHTML = '<div class="empty-state">No users yet. Create one above!</div>';
+        }
+      } catch (error) {
+        container.innerHTML = '<div class="empty-state">Error loading users</div>';
+      }
+    }
+
+    async function displayCategories() {
+      const container = document.getElementById('categoriesList');
+      try {
+        const response = await fetch(`${API_BASE}/categories`);
+        const data = await response.json();
+        
+        if (data.items && data.items.length > 0) {
+          container.innerHTML = data.items.map(cat => `
+            <div class="data-item">
+              <strong>${cat.name}</strong>
+              ${cat.description ? `<span> • ${cat.description}</span>` : '<span style="color: #999;"> • No description</span>'}
+            </div>
+          `).join('');
+        } else {
+          container.innerHTML = '<div class="empty-state">No categories yet. Create one above!</div>';
+        }
+      } catch (error) {
+        console.error('Error loading categories:', error);
+        container.innerHTML = '<div class="empty-state">Error loading categories</div>';
+      }
+    }
+
+    async function displayWorkouts() {
+      const container = document.getElementById('workoutsList');
+      try {
+        const response = await fetch(`${API_BASE}/workouts?limit=10`);
+        const data = await response.json();
+        
+        if (data.items && data.items.length > 0) {
+          container.innerHTML = data.items.map(workout => `
+            <div class="data-item">
+              <strong>${workout.title}</strong>
+              <span>${workout.durationMinutes} min • ${workout.user?.firstName || 'User'} ${workout.user?.lastName || ''} ${workout.category ? '• ' + workout.category.name : ''}</span>
+            </div>
+          `).join('');
+        } else {
+          container.innerHTML = '<div class="empty-state">No workouts yet. Create one above!</div>';
+        }
+      } catch (error) {
+        console.error('Error loading workouts:', error);
+        container.innerHTML = '<div class="empty-state">Error loading workouts</div>';
+      }
+    }
+
+    function updateFormFields() {
+      const type = document.getElementById('dataType').value;
+      
+      // Hide all field groups
+      document.getElementById('userFields').style.display = 'none';
+      document.getElementById('categoryFields').style.display = 'none';
+      document.getElementById('workoutFields').style.display = 'none';
+      
+      // Show relevant fields
+      if (type === 'user') {
+        document.getElementById('userFields').style.display = 'block';
+      } else if (type === 'category') {
+        document.getElementById('categoryFields').style.display = 'block';
+      } else if (type === 'workout') {
+        document.getElementById('workoutFields').style.display = 'block';
+      }
+    }
+
+    // Show custom fields when needed
+    document.getElementById('categoryName')?.addEventListener('change', (e) => {
+      document.getElementById('customCategoryGroup').style.display = 
+        e.target.value === 'custom' ? 'block' : 'none';
+    });
+
+    document.getElementById('workoutTitle')?.addEventListener('change', (e) => {
+      document.getElementById('customTitleGroup').style.display = 
+        e.target.value === 'custom' ? 'block' : 'none';
+    });
+
+    document.getElementById('workoutDuration')?.addEventListener('change', (e) => {
+      document.getElementById('customDurationGroup').style.display = 
+        e.target.value === 'custom' ? 'block' : 'none';
+    });
+
+    function showResult(success, message, data = null) {
+      const resultDiv = document.getElementById('result');
+      resultDiv.className = `result ${success ? 'success' : 'error'}`;
+      resultDiv.style.display = 'block';
+      
+      let content = success ? '✓ ' + message : '✗ ' + message;
+      if (data) {
+        content += `<pre>${JSON.stringify(data, null, 2)}</pre>`;
+      }
+      resultDiv.innerHTML = content;
+
+      setTimeout(() => {
+        resultDiv.style.display = 'none';
+      }, 5000);
+    }
+
+    async function createData(event) {
+      event.preventDefault();
+      
+      const type = document.getElementById('dataType').value;
+      let endpoint, data;
+
+      if (type === 'user') {
+        endpoint = '/users';
+        const firstName = document.getElementById('userFirstName').value;
+        const lastName = document.getElementById('userLastName').value;
+        const email = document.getElementById('userEmail').value;
+        const age = document.getElementById('userAge').value;
+        
+        if (!firstName || !lastName || !email || !age) {
+          showResult(false, 'Please fill all required fields');
+          return;
+        }
+        
+        data = {
+          firstName: firstName.trim(),
+          lastName: lastName.trim(),
+          email: email.trim(),
+          age: parseInt(age)
+        };
+      } 
+      else if (type === 'category') {
+        endpoint = '/categories';
+        let catName = document.getElementById('categoryName').value;
+        
+        if (catName === 'custom') {
+          catName = document.getElementById('customCategoryName').value;
+        }
+        
+        if (!catName || !catName.trim()) {
+          showResult(false, 'Please enter a category name');
+          return;
+        }
+        
+        data = { name: catName.trim() };
+        const desc = document.getElementById('categoryDesc').value;
+        if (desc && desc.trim()) data.description = desc.trim();
+      } 
+      else if (type === 'workout') {
+        endpoint = '/workouts';
+        const userId = document.getElementById('workoutUserId').value;
+        let title = document.getElementById('workoutTitle').value;
+        let duration = document.getElementById('workoutDuration').value;
+        
+        if (!userId || !title || !duration) {
+          showResult(false, 'Please fill all required fields');
+          return;
+        }
+        
+        if (title === 'custom') {
+          title = document.getElementById('customWorkoutTitle').value;
+          if (!title || !title.trim()) {
+            showResult(false, 'Please enter a workout title');
+            return;
+          }
+        }
+        
+        if (duration === 'custom') {
+          duration = document.getElementById('customDuration').value;
+          if (!duration) {
+            showResult(false, 'Please enter a duration');
+            return;
+          }
+        }
+        
+        data = {
+          userId: parseInt(userId),
+          title: title.trim ? title.trim() : title,
+          durationMinutes: parseInt(duration)
+        };
+        const desc = document.getElementById('workoutDesc').value;
+        if (desc && desc.trim()) data.description = desc.trim();
+        const categoryId = document.getElementById('workoutCategory').value;
+        if (categoryId) data.categoryId = parseInt(categoryId);
+      } else {
+        showResult(false, 'Please select a type');
+        return;
+      }
+
+      try {
+        const response = await fetch(`${API_BASE}${endpoint}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data)
+        });
+
+        const result = await response.json();
+        
+        if (response.ok) {
+          showResult(true, `${type.charAt(0).toUpperCase() + type.slice(1)} created successfully!`, result);
+          
+          // Save the current type before resetting
+          const currentType = type;
+          
+          // Reset form
+          document.getElementById('createForm').reset();
+          
+          // Restore the type selection
+          document.getElementById('dataType').value = currentType;
+          updateFormFields();
+          
+          // Reload dropdowns and display lists
+          if (currentType === 'user') {
+            await loadUsers();
+            await displayUsers();
+          }
+          if (currentType === 'category') {
+            await loadCategories();
+            await displayCategories();
+          }
+          if (currentType === 'workout') {
+            await displayWorkouts();
+          }
+          
+          console.log(`${currentType} created and list updated`);
+        } else {
+          showResult(false, result.error || `Failed to create ${type}`);
+        }
+      } catch (error) {
+        showResult(false, error.message);
+      }
+    }
+  </script>
+</body>
+</html>

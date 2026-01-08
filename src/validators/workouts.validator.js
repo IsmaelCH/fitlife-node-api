@@ -8,7 +8,11 @@ function validateCreateWorkout(body) {
   const { title, description, durationMinutes, userId } = body;
 
   if (!isNonEmptyString(title)) errors.push("title is required");
-  if (!isNonEmptyString(description)) errors.push("description is required");
+  
+  // description is optional, but if provided must be non-empty
+  if (description !== undefined && description !== null && !isNonEmptyString(description)) {
+    errors.push("description cannot be empty if provided");
+  }
 
   if (typeof durationMinutes !== "number" || Number.isNaN(durationMinutes)) {
     errors.push("durationMinutes must be a number");

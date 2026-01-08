@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>API Demo - FitLife</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    .controls {
+      background: white;
+      border: 1px solid #e0e0e0;
+      border-radius: 8px;
+      padding: 32px;
+      margin-bottom: 24px;
+      transition: box-shadow 0.2s;
+    }
+
+    .controls:hover {
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+
+    .controls h3 {
+      margin-top: 0;
+      margin-bottom: 16px;
+      font-size: 18px;
+      font-weight: 600;
+      color: #333;
+    }
+
+    .btn-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 24px;
+    }
+
+    .btn-group:last-child {
+      margin-bottom: 0;
+    }
+
+    .btn-group button {
+      padding: 10px 20px;
+      background: white;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+      transition: all 0.2s;
+      color: #333;
+    }
+
+    .btn-group button:hover {
+      border-color: #333;
+      background: #fafafa;
+    }
+
+    .filter-section {
+      background: white;
+      border: 1px solid #e0e0e0;
+      border-radius: 8px;
+      padding: 32px;
+      margin-bottom: 24px;
+    }
+
+    .filter-section h3 {
+      margin-top: 0;
+      margin-bottom: 16px;
+      font-size: 18px;
+      font-weight: 600;
+      color: #333;
+    }
+
+    .filter-group {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .filter-group label {
+      font-size: 14px;
+      color: #666;
+      min-width: 100px;
+    }
+
+    .filter-group input,
+    .filter-group select {
+      padding: 8px 12px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      font-size: 14px;
+      flex: 1;
+      min-width: 150px;
+    }
+
+    .filter-group input:focus,
+    .filter-group select:focus {
+      outline: none;
+      border-color: #333;
+    }
+
+    .filter-group button {
+      padding: 8px 20px;
+      background: #333;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+      transition: background 0.2s;
+    }
+
+    .filter-group button:hover {
+      background: #555;
+    }
+
+    #result {
+      background: white;
+      border: 1px solid #e0e0e0;
+      border-radius: 8px;
+      padding: 32px;
+    }
+
+    #endpoint {
+      background: #f8f9fa;
+      padding: 12px 16px;
+      border-radius: 6px;
+      font-family: 'Courier New', monospace;
+      font-size: 14px;
+      margin-bottom: 16px;
+      color: #333;
+      border: 1px solid #e0e0e0;
+    }
+
+    #output {
+      background: #fafafa;
+      padding: 16px;
+      border-radius: 6px;
+      border: 1px solid #e0e0e0;
+      max-height: 600px;
+      overflow: auto;
+    }
+
+    #output pre {
+      margin: 0;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+      font-family: 'Courier New', monospace;
+      font-size: 13px;
+      color: #333;
+      line-height: 1.6;
+    }
+
+    .loading {
+      color: #666;
+      font-style: italic;
+      padding: 20px;
+      text-align: center;
+    }
+
+    .error {
+      color: #d32f2f;
+      padding: 16px;
+      background: #ffebee;
+      border-radius: 6px;
+      margin-bottom: 16px;
+      border: 1px solid #ffcdd2;
+    }
+
+    .success {
+      color: #388e3c;
+      padding: 16px;
+      background: #e8f5e9;
+      border-radius: 6px;
+      margin-bottom: 16px;
+      border: 1px solid #c8e6c9;
+    }
+  </style>
+</head>
+<body>
+  <div class="page-header">
+    <h1>🏃 FitLife API Demo</h1>
+    <p>Interactive API testing interface</p>
+    <div class="nav-links">
+      <a href="index.html">📖 Documentation</a>
+      <a href="demo.html" class="active">🧪 Demo</a>
+      <a href="create.html">➕ Create</a>
+    </div>
+  </div>
+
+  <div class="content-wrapper">
+    <div class="controls">
+      <h3>Users</h3>
+      <div class="btn-group">
+        <button onclick="fetchData('/users')">All Users</button>
+      </div>
+
+      <h3>Categories</h3>
+      <div class="btn-group">
+        <button onclick="fetchData('/categories')">All Categories</button>
+      </div>
+
+      <h3>Workouts</h3>
+      <div class="btn-group">
+        <button onclick="fetchData('/workouts')">All Workouts</button>
+        <button onclick="fetchData('/workouts?limit=5')">First 5</button>
+      </div>
+
+      <h3>Statistics</h3>
+      <div class="btn-group">
+        <button onclick="fetchData('/stats')">Overall Stats</button>
+      </div>
+    </div>
+
+    <div class="filter-section">
+      <h3>Search Workouts</h3>
+      <div class="filter-group">
+        <label>Search:</label>
+        <input type="text" id="searchInput" placeholder="e.g. Running, Yoga">
+        <button onclick="searchWorkouts()">Search</button>
+      </div>
+
+      <h3>Filter by Duration</h3>
+      <div class="filter-group">
+        <label>Min:</label>
+        <input type="number" id="minDuration" placeholder="15">
+        <label>Max:</label>
+        <input type="number" id="maxDuration" placeholder="60">
+        <button onclick="filterByDuration()">Filter</button>
+      </div>
+
+      <h3>Sort Workouts</h3>
+      <div class="filter-group">
+        <label>Sort by:</label>
+        <select id="sortBy">
+          <option value="id">ID</option>
+          <option value="title">Title</option>
+          <option value="durationMinutes">Duration</option>
+          <option value="createdAt">Date</option>
+        </select>
+        <label>Order:</label>
+        <select id="sortOrder">
+          <option value="asc">Ascending</option>
+          <option value="desc">Descending</option>
+        </select>
+        <button onclick="sortWorkouts()">Sort</button>
+      </div>
+    </div>
+
+    <div id="result">
+      <div id="endpoint" class="endpoint-info">Click a button to see data...</div>
+      <div id="output" style="color: #999;">Press any button above to fetch data from the API</div>
+    </div>
+  </div>
+
+  <script>
+    const API_BASE = 'http://localhost:3000';
+
+    async function fetchData(endpoint) {
+      const output = document.getElementById('output');
+      const endpointInfo = document.getElementById('endpoint');
+      
+      output.innerHTML = '<div class="loading">⏳ Loading...</div>';
+      endpointInfo.textContent = `GET ${API_BASE}${endpoint}`;
+
+      try {
+        const response = await fetch(`${API_BASE}${endpoint}`);
+        const data = await response.json();
+        
+        if (response.ok) {
+          output.innerHTML = `<div class="success">✓ Success</div>` + 
+                           `<pre>${JSON.stringify(data, null, 2)}</pre>`;
+        } else {
+          output.innerHTML = `<div class="error">✗ Error: ${data.error || 'Unknown error'}</div>`;
+        }
+      } catch (error) {
+        output.innerHTML = `<div class="error">✗ Error: ${error.message}<br><br>` +
+                         `Make sure the server is running: <code>npm run dev</code></div>`;
+      }
+    }
+
+    function searchWorkouts() {
+      const search = document.getElementById('searchInput').value;
+      if (search.trim()) {
+        fetchData(`/workouts?search=${encodeURIComponent(search)}`);
+      } else {
+        alert('Please enter a search term');
+      }
+    }
+
+    function filterByDuration() {
+      const min = document.getElementById('minDuration').value;
+      const max = document.getElementById('maxDuration').value;
+      
+      if (min && max) {
+        fetchData(`/workouts?minDuration=${min}&maxDuration=${max}`);
+      } else if (min) {
+        fetchData(`/workouts?minDuration=${min}`);
+      } else if (max) {
+        fetchData(`/workouts?maxDuration=${max}`);
+      } else {
+        alert('Please enter min and/or max duration');
+      }
+    }
+
+    function sortWorkouts() {
+      const sortBy = document.getElementById('sortBy').value;
+      const sortOrder = document.getElementById('sortOrder').value;
+      fetchData(`/workouts?sortBy=${sortBy}&sortOrder=${sortOrder}`);
+    }
+  </script>
+</body>
+</html>

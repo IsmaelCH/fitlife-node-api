@@ -1,9 +1,12 @@
+require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const path = require("path");
 
 const usersRoutes = require("./routes/users.routes");
 const workoutsRoutes = require("./routes/workouts.routes");
+const categoriesRoutes = require("./routes/categories.routes");
+const statsRoutes = require("./routes/stats.routes");
 
 const app = express();
 
@@ -16,6 +19,8 @@ app.use(express.static(path.join(__dirname, "..", "public")));
 // API routes
 app.use("/users", usersRoutes);
 app.use("/workouts", workoutsRoutes);
+app.use("/categories", categoriesRoutes);
+app.use("/stats", statsRoutes);
 
 // 404
 app.use((req, res) => {

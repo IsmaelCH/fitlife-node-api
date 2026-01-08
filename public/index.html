@@ -16,6 +16,14 @@
     <header class="page-header">
       <h1 class="title">FitLife API</h1>
       <p class="subtitle">Node.js · Express · Prisma · SQLite</p>
+      <div style="text-align: center; margin-top: 40px; display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">
+        <a href="/demo.html" style="display: inline-flex; align-items: center; background: #000; color: white; padding: 14px 28px; border-radius: 6px; text-decoration: none; font-weight: 500; transition: all 0.2s; font-size: 14px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+          <span style="margin-right: 8px;">🧪</span> Demo
+        </a>
+        <a href="/create.html" style="display: inline-flex; align-items: center; background: white; color: #000; padding: 14px 28px; border-radius: 6px; text-decoration: none; font-weight: 500; border: 1px solid #e0e0e0; transition: all 0.2s; font-size: 14px;">
+          <span style="margin-right: 8px;">+</span> Create Data
+        </a>
+      </div>
     </header>
 
     <main class="stack">
@@ -47,6 +55,9 @@
         <h2 class="section-title">Workouts</h2>
         <ul class="list">
           <li><code>GET /workouts?limit=20&amp;offset=0&amp;search=cardio</code> – List workouts (pagination + search)</li>
+          <li><code>GET /workouts?userId=1&amp;categoryId=2</code> – Filter by user or category</li>
+          <li><code>GET /workouts?minDuration=30&amp;maxDuration=60</code> – Filter by duration</li>
+          <li><code>GET /workouts?sortBy=durationMinutes&amp;sortOrder=desc</code> – Sort (id, title, durationMinutes, createdAt)</li>
           <li><code>GET /workouts/:id</code> – Get workout details</li>
           <li><code>POST /workouts</code> – Create workout</li>
           <li><code>PUT /workouts/:id</code> – Update workout</li>
@@ -58,8 +69,33 @@
   "title": "Cardio session",
   "description": "Treadmill and bike",
   "durationMinutes": 45,
-  "userId": 1
+  "userId": 1,
+  "categoryId": 2
 }</pre>
+      </section>
+
+      <section class="card">
+        <h2 class="section-title">Categories</h2>
+        <ul class="list">
+          <li><code>GET /categories</code> – List all categories (with workout count)</li>
+          <li><code>GET /categories/:id</code> – Get category details (includes workouts)</li>
+          <li><code>POST /categories</code> – Create category</li>
+          <li><code>PUT /categories/:id</code> – Update category</li>
+          <li><code>DELETE /categories/:id</code> – Delete category</li>
+        </ul>
+
+        <h3 class="block-title">POST /categories body</h3>
+        <pre>{
+  "name": "Cardio"
+}</pre>
+      </section>
+
+      <section class="card">
+        <h2 class="section-title">Statistics</h2>
+        <ul class="list">
+          <li><code>GET /stats</code> – Overview stats (total users, workouts, avg duration, top categories)</li>
+          <li><code>GET /stats/users/:id</code> – User stats (total workouts, minutes, this week, by category)</li>
+        </ul>
       </section>
 
       <section class="card">
@@ -67,6 +103,8 @@
         <ul class="list">
           <li>Validation: required fields, numeric checks, firstName cannot contain digits.</li>
           <li>Max limit is 100.</li>
+          <li>Workouts can have optional categoryId (null allowed).</li>
+          <li>Deleting a category sets workouts categoryId to null.</li>
         </ul>
       </section>
     </main>

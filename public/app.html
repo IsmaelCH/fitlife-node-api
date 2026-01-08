@@ -1,0 +1,949 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FitLife API - Dashboard</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #f8f9fa;
+      color: #1a1a1a;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0;
+    }
+
+    /* Header */
+    header {
+      background: white;
+      border-bottom: 1px solid #e0e0e0;
+      padding: 20px 40px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+
+    .header-content {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #000;
+    }
+
+    nav {
+      display: flex;
+      gap: 8px;
+    }
+
+    nav a {
+      padding: 8px 16px;
+      text-decoration: none;
+      color: #666;
+      font-size: 0.9rem;
+      font-weight: 500;
+      border-radius: 6px;
+      transition: all 0.2s;
+    }
+
+    nav a:hover, nav a.active {
+      background: #f5f5f5;
+      color: #000;
+    }
+
+    /* Main Layout */
+    .main-layout {
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      gap: 0;
+      min-height: calc(100vh - 61px);
+    }
+
+    /* Sidebar */
+    .sidebar {
+      background: white;
+      border-right: 1px solid #e0e0e0;
+      padding: 30px 20px;
+    }
+
+    .sidebar-section {
+      margin-bottom: 30px;
+    }
+
+    .sidebar-section h3 {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: #888;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 12px;
+    }
+
+    .sidebar-menu {
+      list-style: none;
+    }
+
+    .sidebar-menu li {
+      margin-bottom: 4px;
+    }
+
+    .sidebar-menu button {
+      width: 100%;
+      text-align: left;
+      padding: 10px 14px;
+      background: none;
+      border: none;
+      border-radius: 6px;
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: #444;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .sidebar-menu button:hover {
+      background: #f5f5f5;
+      color: #000;
+    }
+
+    .sidebar-menu button.active {
+      background: #000;
+      color: white;
+    }
+
+    /* Content Area */
+    .content {
+      padding: 40px;
+      overflow-y: auto;
+    }
+
+    .content-header {
+      margin-bottom: 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .content-header h1 {
+      font-size: 1.75rem;
+      font-weight: 700;
+      color: #000;
+    }
+
+    .btn {
+      padding: 10px 20px;
+      background: #000;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 0.9rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn:hover {
+      opacity: 0.85;
+    }
+
+    .btn-secondary {
+      background: white;
+      color: #000;
+      border: 1px solid #e0e0e0;
+    }
+
+    .btn-sm {
+      padding: 6px 12px;
+      font-size: 0.8rem;
+    }
+
+    /* Grid */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+
+    .card {
+      background: white;
+      border: 1px solid #e5e5e5;
+      border-radius: 8px;
+      padding: 24px;
+      transition: all 0.2s;
+    }
+
+    .card:hover {
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+      border-color: #d0d0d0;
+    }
+
+    .card h3 {
+      font-size: 1rem;
+      font-weight: 600;
+      color: #000;
+      margin-bottom: 8px;
+    }
+
+    .card p {
+      font-size: 0.85rem;
+      color: #666;
+      line-height: 1.5;
+    }
+
+    .card-meta {
+      margin-top: 16px;
+      padding-top: 16px;
+      border-top: 1px solid #f0f0f0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .card-meta span {
+      font-size: 0.8rem;
+      color: #888;
+    }
+
+    .card-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    /* Table */
+    .table-container {
+      background: white;
+      border: 1px solid #e5e5e5;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th {
+      background: #fafafa;
+      padding: 14px 20px;
+      text-align: left;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: #666;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      border-bottom: 1px solid #e5e5e5;
+    }
+
+    td {
+      padding: 16px 20px;
+      border-bottom: 1px solid #f0f0f0;
+      font-size: 0.9rem;
+      color: #333;
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    tr:hover {
+      background: #fafafa;
+    }
+
+    /* Badge */
+    .badge {
+      display: inline-block;
+      padding: 4px 10px;
+      background: #f0f0f0;
+      color: #444;
+      border-radius: 12px;
+      font-size: 0.75rem;
+      font-weight: 500;
+    }
+
+    /* Modal */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0,0,0,0.5);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .modal.active {
+      display: flex;
+    }
+
+    .modal-content {
+      background: white;
+      border-radius: 12px;
+      max-width: 500px;
+      width: 100%;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+
+    .modal-header {
+      padding: 24px;
+      border-bottom: 1px solid #e5e5e5;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .modal-header h2 {
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: #000;
+    }
+
+    .modal-close {
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      color: #888;
+      cursor: pointer;
+      padding: 0;
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 4px;
+    }
+
+    .modal-close:hover {
+      background: #f5f5f5;
+    }
+
+    .modal-body {
+      padding: 24px;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 6px;
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: #333;
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      width: 100%;
+      padding: 10px 14px;
+      border: 1px solid #d0d0d0;
+      border-radius: 6px;
+      font-size: 0.9rem;
+      font-family: inherit;
+      transition: border-color 0.2s;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+      outline: none;
+      border-color: #000;
+    }
+
+    .form-group textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+
+    .modal-footer {
+      padding: 20px 24px;
+      border-top: 1px solid #e5e5e5;
+      display: flex;
+      gap: 12px;
+      justify-content: flex-end;
+    }
+
+    /* Loading */
+    .loading {
+      text-align: center;
+      padding: 60px 20px;
+      color: #888;
+    }
+
+    .spinner {
+      width: 40px;
+      height: 40px;
+      border: 3px solid #f0f0f0;
+      border-top-color: #000;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin: 0 auto 16px;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* Alert */
+    .alert {
+      padding: 14px 18px;
+      border-radius: 6px;
+      margin-bottom: 20px;
+      font-size: 0.9rem;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .alert-success {
+      background: #f0fdf4;
+      color: #166534;
+      border: 1px solid #bbf7d0;
+    }
+
+    .alert-error {
+      background: #fef2f2;
+      color: #991b1b;
+      border: 1px solid #fecaca;
+    }
+
+    /* Empty State */
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+    }
+
+    .empty-state h3 {
+      font-size: 1.1rem;
+      color: #333;
+      margin-bottom: 8px;
+    }
+
+    .empty-state p {
+      color: #888;
+      font-size: 0.9rem;
+      margin-bottom: 20px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-content">
+      <div class="logo">FitLife</div>
+      <nav>
+        <a href="/">Documentation</a>
+        <a href="/app.html" class="active">Dashboard</a>
+      </nav>
+    </div>
+  </header>
+
+  <div class="container">
+    <div class="main-layout">
+      <!-- Sidebar -->
+      <aside class="sidebar">
+        <div class="sidebar-section">
+          <h3>Resources</h3>
+          <ul class="sidebar-menu">
+            <li><button onclick="showSection('users')" class="active">👤 Users</button></li>
+            <li><button onclick="showSection('categories')">🏷️ Categories</button></li>
+            <li><button onclick="showSection('workouts')">💪 Workouts</button></li>
+            <li><button onclick="showSection('stats')">📊 Statistics</button></li>
+          </ul>
+        </div>
+      </aside>
+
+      <!-- Main Content -->
+      <main class="content">
+        <div id="alert-container"></div>
+
+        <!-- Users Section -->
+        <section id="users-section">
+          <div class="content-header">
+            <h1>Users</h1>
+            <button class="btn" onclick="openCreateModal('user')">+ New User</button>
+          </div>
+          <div id="users-content" class="loading">
+            <div class="spinner"></div>
+            <p>Loading users...</p>
+          </div>
+        </section>
+
+        <!-- Categories Section -->
+        <section id="categories-section" style="display:none;">
+          <div class="content-header">
+            <h1>Categories</h1>
+            <button class="btn" onclick="openCreateModal('category')">+ New Category</button>
+          </div>
+          <div id="categories-content" class="loading">
+            <div class="spinner"></div>
+            <p>Loading categories...</p>
+          </div>
+        </section>
+
+        <!-- Workouts Section -->
+        <section id="workouts-section" style="display:none;">
+          <div class="content-header">
+            <h1>Workouts</h1>
+            <button class="btn" onclick="openCreateModal('workout')">+ New Workout</button>
+          </div>
+          <div id="workouts-content" class="loading">
+            <div class="spinner"></div>
+            <p>Loading workouts...</p>
+          </div>
+        </section>
+
+        <!-- Stats Section -->
+        <section id="stats-section" style="display:none;">
+          <div class="content-header">
+            <h1>Statistics</h1>
+          </div>
+          <div id="stats-content" class="loading">
+            <div class="spinner"></div>
+            <p>Loading stats...</p>
+          </div>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <!-- Create/Edit Modal -->
+  <div id="modal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 id="modal-title">Create Item</h2>
+        <button class="modal-close" onclick="closeModal()">×</button>
+      </div>
+      <div class="modal-body" id="modal-body">
+        <!-- Form will be inserted here -->
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const API_BASE = 'http://localhost:3000';
+    let currentSection = 'users';
+    let usersData = [];
+    let categoriesData = [];
+    let workoutsData = [];
+
+    // Initialize
+    document.addEventListener('DOMContentLoaded', () => {
+      loadUsers();
+    });
+
+    // Section Navigation
+    function showSection(section) {
+      currentSection = section;
+      
+      // Update sidebar active state
+      document.querySelectorAll('.sidebar-menu button').forEach(btn => {
+        btn.classList.remove('active');
+      });
+      event.target.classList.add('active');
+
+      // Hide all sections
+      ['users', 'categories', 'workouts', 'stats'].forEach(s => {
+        document.getElementById(`${s}-section`).style.display = 'none';
+      });
+
+      // Show selected section
+      document.getElementById(`${section}-section`).style.display = 'block';
+
+      // Load data if needed
+      if (section === 'users' && usersData.length === 0) loadUsers();
+      else if (section === 'categories' && categoriesData.length === 0) loadCategories();
+      else if (section === 'workouts' && workoutsData.length === 0) loadWorkouts();
+      else if (section === 'stats') loadStats();
+    }
+
+    // Load Users
+    async function loadUsers() {
+      try {
+        const res = await fetch(`${API_BASE}/users`);
+        const data = await res.json();
+        usersData = data.items || [];
+        renderUsers();
+      } catch (error) {
+        showError('Failed to load users');
+      }
+    }
+
+    function renderUsers() {
+      const container = document.getElementById('users-content');
+      
+      if (usersData.length === 0) {
+        container.innerHTML = `
+          <div class="empty-state">
+            <h3>No users yet</h3>
+            <p>Create your first user to get started</p>
+            <button class="btn" onclick="openCreateModal('user')">+ New User</button>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = `
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Age</th>
+                <th>Workouts</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${usersData.map(user => `
+                <tr>
+                  <td><strong>${user.firstName} ${user.lastName}</strong></td>
+                  <td>${user.email}</td>
+                  <td>${user.age}</td>
+                  <td><span class="badge">${user.workouts?.length || 0} workouts</span></td>
+                  <td>
+                    <div class="card-actions">
+                      <button class="btn btn-sm btn-secondary" onclick="editUser(${user.id})">Edit</button>
+                      <button class="btn btn-sm btn-secondary" onclick="deleteUser(${user.id})">Delete</button>
+                    </div>
+                  </td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        </div>
+      `;
+    }
+
+    // Load Categories
+    async function loadCategories() {
+      try {
+        const res = await fetch(`${API_BASE}/categories`);
+        categoriesData = await res.json();
+        renderCategories();
+      } catch (error) {
+        showError('Failed to load categories');
+      }
+    }
+
+    function renderCategories() {
+      const container = document.getElementById('categories-content');
+      
+      if (categoriesData.length === 0) {
+        container.innerHTML = `
+          <div class="empty-state">
+            <h3>No categories yet</h3>
+            <p>Create your first category</p>
+            <button class="btn" onclick="openCreateModal('category')">+ New Category</button>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = `
+        <div class="grid">
+          ${categoriesData.map(cat => `
+            <div class="card">
+              <h3>${cat.name}</h3>
+              <p class="card-meta">
+                <span>${cat._count?.workouts || 0} workouts</span>
+                <div class="card-actions">
+                  <button class="btn btn-sm btn-secondary" onclick="editCategory(${cat.id})">Edit</button>
+                  <button class="btn btn-sm btn-secondary" onclick="deleteCategory(${cat.id})">Delete</button>
+                </div>
+              </p>
+            </div>
+          `).join('')}
+        </div>
+      `;
+    }
+
+    // Load Workouts
+    async function loadWorkouts() {
+      try {
+        const res = await fetch(`${API_BASE}/workouts`);
+        const data = await res.json();
+        workoutsData = data.items || [];
+        renderWorkouts();
+      } catch (error) {
+        showError('Failed to load workouts');
+      }
+    }
+
+    function renderWorkouts() {
+      const container = document.getElementById('workouts-content');
+      
+      if (workoutsData.length === 0) {
+        container.innerHTML = `
+          <div class="empty-state">
+            <h3>No workouts yet</h3>
+            <p>Create your first workout</p>
+            <button class="btn" onclick="openCreateModal('workout')">+ New Workout</button>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = `
+        <div class="grid">
+          ${workoutsData.map(workout => `
+            <div class="card">
+              <h3>${workout.title}</h3>
+              <p>${workout.description}</p>
+              <div class="card-meta">
+                <span>${workout.durationMinutes} min · ${workout.user?.firstName || 'Unknown'}</span>
+                <div class="card-actions">
+                  <button class="btn btn-sm btn-secondary" onclick="editWorkout(${workout.id})">Edit</button>
+                  <button class="btn btn-sm btn-secondary" onclick="deleteWorkout(${workout.id})">Delete</button>
+                </div>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      `;
+    }
+
+    // Load Stats
+    async function loadStats() {
+      try {
+        const res = await fetch(`${API_BASE}/stats`);
+        const stats = await res.json();
+        renderStats(stats);
+      } catch (error) {
+        showError('Failed to load stats');
+      }
+    }
+
+    function renderStats(stats) {
+      const container = document.getElementById('stats-content');
+      container.innerHTML = `
+        <div class="grid">
+          <div class="card">
+            <h3>Total Users</h3>
+            <p style="font-size: 2rem; font-weight: 700; color: #000;">${stats.totalUsers}</p>
+          </div>
+          <div class="card">
+            <h3>Total Workouts</h3>
+            <p style="font-size: 2rem; font-weight: 700; color: #000;">${stats.totalWorkouts}</p>
+          </div>
+          <div class="card">
+            <h3>Total Categories</h3>
+            <p style="font-size: 2rem; font-weight: 700; color: #000;">${stats.totalCategories}</p>
+          </div>
+          <div class="card">
+            <h3>Avg Duration</h3>
+            <p style="font-size: 2rem; font-weight: 700; color: #000;">${Math.round(stats.averageDuration)} min</p>
+          </div>
+        </div>
+      `;
+    }
+
+    // Modal Functions
+    function openCreateModal(type) {
+      const modal = document.getElementById('modal');
+      const title = document.getElementById('modal-title');
+      const body = document.getElementById('modal-body');
+
+      title.textContent = `Create ${type.charAt(0).toUpperCase() + type.slice(1)}`;
+      
+      if (type === 'user') {
+        body.innerHTML = `
+          <form id="create-form">
+            <div class="form-group">
+              <label>First Name *</label>
+              <input type="text" name="firstName" required>
+            </div>
+            <div class="form-group">
+              <label>Last Name *</label>
+              <input type="text" name="lastName" required>
+            </div>
+            <div class="form-group">
+              <label>Email *</label>
+              <input type="email" name="email" required>
+            </div>
+            <div class="form-group">
+              <label>Age *</label>
+              <input type="number" name="age" min="1" required>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+              <button type="submit" class="btn">Create User</button>
+            </div>
+          </form>
+        `;
+        document.getElementById('create-form').onsubmit = (e) => {
+          e.preventDefault();
+          createUser(new FormData(e.target));
+        };
+      } else if (type === 'category') {
+        body.innerHTML = `
+          <form id="create-form">
+            <div class="form-group">
+              <label>Name *</label>
+              <input type="text" name="name" required>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+              <button type="submit" class="btn">Create Category</button>
+            </div>
+          </form>
+        `;
+        document.getElementById('create-form').onsubmit = (e) => {
+          e.preventDefault();
+          createCategory(new FormData(e.target));
+        };
+      }
+
+      modal.classList.add('active');
+    }
+
+    function closeModal() {
+      document.getElementById('modal').classList.remove('active');
+    }
+
+    // CRUD Operations
+    async function createUser(formData) {
+      try {
+        const data = Object.fromEntries(formData);
+        data.age = parseInt(data.age);
+        
+        const res = await fetch(`${API_BASE}/users`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data)
+        });
+
+        if (res.ok) {
+          showSuccess('User created successfully');
+          closeModal();
+          loadUsers();
+        } else {
+          const error = await res.json();
+          showError(error.error || 'Failed to create user');
+        }
+      } catch (error) {
+        showError('Failed to create user');
+      }
+    }
+
+    async function deleteUser(id) {
+      if (!confirm('Are you sure you want to delete this user?')) return;
+
+      try {
+        const res = await fetch(`${API_BASE}/users/${id}`, { method: 'DELETE' });
+        if (res.ok) {
+          showSuccess('User deleted successfully');
+          loadUsers();
+        } else {
+          showError('Failed to delete user');
+        }
+      } catch (error) {
+        showError('Failed to delete user');
+      }
+    }
+
+    async function createCategory(formData) {
+      try {
+        const data = Object.fromEntries(formData);
+        
+        const res = await fetch(`${API_BASE}/categories`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data)
+        });
+
+        if (res.ok) {
+          showSuccess('Category created successfully');
+          closeModal();
+          loadCategories();
+        } else {
+          const error = await res.json();
+          showError(error.error || 'Failed to create category');
+        }
+      } catch (error) {
+        showError('Failed to create category');
+      }
+    }
+
+    async function deleteCategory(id) {
+      if (!confirm('Are you sure you want to delete this category?')) return;
+
+      try {
+        const res = await fetch(`${API_BASE}/categories/${id}`, { method: 'DELETE' });
+        if (res.ok) {
+          showSuccess('Category deleted successfully');
+          loadCategories();
+        } else {
+          showError('Failed to delete category');
+        }
+      } catch (error) {
+        showError('Failed to delete category');
+      }
+    }
+
+    async function deleteWorkout(id) {
+      if (!confirm('Are you sure you want to delete this workout?')) return;
+
+      try {
+        const res = await fetch(`${API_BASE}/workouts/${id}`, { method: 'DELETE' });
+        if (res.ok) {
+          showSuccess('Workout deleted successfully');
+          loadWorkouts();
+        } else {
+          showError('Failed to delete workout');
+        }
+      } catch (error) {
+        showError('Failed to delete workout');
+      }
+    }
+
+    // Alerts
+    function showSuccess(message) {
+      const container = document.getElementById('alert-container');
+      container.innerHTML = `<div class="alert alert-success">✓ ${message}</div>`;
+      setTimeout(() => container.innerHTML = '', 3000);
+    }
+
+    function showError(message) {
+      const container = document.getElementById('alert-container');
+      container.innerHTML = `<div class="alert alert-error">✕ ${message}</div>`;
+      setTimeout(() => container.innerHTML = '', 5000);
+    }
+
+    // Edit functions (placeholders)
+    function editUser(id) { alert('Edit user feature coming soon'); }
+    function editCategory(id) { alert('Edit category feature coming soon'); }
+    function editWorkout(id) { alert('Edit workout feature coming soon'); }
+  </script>
+</body>
+</html>
